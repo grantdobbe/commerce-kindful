@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Implements Trail payment processing for use with Drupal Commerce.
+ * Implements kindful payment processing for use with Drupal Commerce.
  */
 
 
@@ -10,20 +10,20 @@
 /**
  * Implements hook_menu().
  */
-function commerce_trail_menu() {
+function commerce_kindful_menu() {
   $items = array();
 
   // Define an always accessible path to receive transactions.
-  $items['commerce_trail/transaction'] = array(
-    'page callback' => 'commerce_trail_process_transaction',
+  $items['commerce_kindful/transaction'] = array(
+    'page callback' => 'commerce_kindful_process_transaction',
     'page arguments' => array(),
     'access callback' => TRUE,
     'type' => MENU_CALLBACK,
   );
 
   // Define an additional transaction path that is payment method / instance specific.
-  $items['commerce_trail/transaction/%commerce_payment_method_instance'] = array(
-    'page callback' => 'commerce_trail_process_transaction',
+  $items['commerce_kindful/transaction/%commerce_payment_method_instance'] = array(
+    'page callback' => 'commerce_kindful_process_transaction',
     'page arguments' => array(2),
     'access callback' => TRUE,
     'type' => MENU_CALLBACK,
@@ -35,17 +35,17 @@ function commerce_trail_menu() {
 /**
  * Implements hook_commerce_payment_method_info().
  */
-function commerce_trail_commerce_payment_method_info() {
+function commerce_kindful_commerce_payment_method_info() {
   $payment_methods = array();
 
-  $display_title = t('Trail');
+  $display_title = t('kindful');
 
-  $payment_methods['trail'] = array(
-    'base' => 'commerce_trail',
-    'title' => t('Trail'),
-    'short_title' => t('Trail'),
+  $payment_methods['kindful'] = array(
+    'base' => 'commerce_kindful',
+    'title' => t('kindful'),
+    'short_title' => t('kindful'),
     'display_title' => $display_title,
-    'description' => t('Trail '),
+    'description' => t('kindful '),
     'terminal' => FALSE,
     'offsite' => TRUE,
     'offsite_autoredirect' => FALSE,
@@ -58,7 +58,7 @@ function commerce_trail_commerce_payment_method_info() {
 /**
  * Payment method callback: settings form.
  */
-function commerce_trail_settings_form($settings = array()) {
+function commerce_kindful_settings_form($settings = array()) {
   $form = array();
   // stored settings array.
   $settings = (array) $settings;
@@ -67,7 +67,7 @@ function commerce_trail_settings_form($settings = array()) {
   $form['organization_ID'] = array(
     '#type' => 'textfield',
     '#title' => t('Organization ID'),
-    '#description' => t('The Organization ID for your Trail account.'),
+    '#description' => t('The Organization ID for your kindful account.'),
     '#default_value' => $settings['organization_ID'],
     '#required' => TRUE,
   );
@@ -76,7 +76,7 @@ function commerce_trail_settings_form($settings = array()) {
   $form['fund_ID'] = array(
     '#type' => 'textfield',
     '#title' => t('Fund ID'),
-    '#description' => t('The Fund ID you want to use at Trail.'),
+    '#description' => t('The Fund ID you want to use at kindful.'),
     '#default_value' => $settings['fund_ID'],
     '#required' => TRUE,
   );
@@ -87,10 +87,10 @@ function commerce_trail_settings_form($settings = array()) {
 /**
  * Implements CALLBACK_commerce_payment_method_redirect_form()
  * 
- * sets up the redirect POST request and form action URL for redirect to Trail
+ * sets up the redirect POST request and form action URL for redirect to kindful
  * 
  */
-function commerce_trail_redirect_form($form, &$form_state, $order, $payment_method) {
+function commerce_kindful_redirect_form($form, &$form_state, $order, $payment_method) {
  
   // get the order info
   $wrapper = entity_metadata_wrapper('commerce_order', $order);
@@ -127,7 +127,7 @@ function commerce_trail_redirect_form($form, &$form_state, $order, $payment_meth
   );
   
   // set up the redirection URL
-  $form['#action'] = url('https://usetrail.com/', array('query' => $data));
+  $form['#action'] = url('https://usekindful.com/', array('query' => $data));
   
   // add the query string options as form fields
   foreach ($data as $name => $value) {
@@ -136,10 +136,10 @@ function commerce_trail_redirect_form($form, &$form_state, $order, $payment_meth
     }
   }
   
-  // submit to Trail
+  // submit to kindful
   $form['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Use Trail'),
+    '#value' => t('Use kindful'),
   );
 
   return $form;
@@ -148,16 +148,16 @@ function commerce_trail_redirect_form($form, &$form_state, $order, $payment_meth
 /**
  * Implements CALLBACK_commerce_payment_method_redirect_form_validate().
  * 
- * Validates data coming back from Trail in a POST request.
+ * Validates data coming back from kindful in a POST request.
  */
-function commerce_trail_redirect_form_validate($order, $payment_method) {
+function commerce_kindful_redirect_form_validate($order, $payment_method) {
 
   // grab the values from the POST
   $values = $_POST;
 
   // run some very, very, VERY basic  validation
   if ($values['source_ID'] == 'Drupal Commerce') {
-    $order->data['trail_transaction_id'] = $values['trail_transaction'];
+    $order->data['kindful_transaction_id'] = $values['kindful_transaction'];
     if ($values['success'] == TRUE) { return TRUE; }
   }
   // if stuff doesn't work out, return FALSE so commerce can try again
@@ -171,7 +171,7 @@ function commerce_trail_redirect_form_validate($order, $payment_method) {
  * Asks for donation schedule (one time vs. recurring)
  *
  */ 
-function commerce_trail_submit_form($payment_method, $pane_values, $checkout_pane, $order) {
+function commerce_kindful_submit_form($payment_method, $pane_values, $checkout_pane, $order) {
   
   // set up the radio button options
   $options = array( 'onetime' => 'One Time', 'recurring' => 'Recurring');
@@ -192,7 +192,7 @@ function commerce_trail_submit_form($payment_method, $pane_values, $checkout_pan
 /**
  * Implements CALLBACK_commerce_payment_method_submit_form_validate().
  */ 
-function commerce_trail_submit_form_submit($payment_method, $pane_values, $checkout_pane, $order) {
+function commerce_kindful_submit_form_submit($payment_method, $pane_values, $checkout_pane, $order) {
   // grab the onetime/recurring option data and tack it onto  $order
   $order->data['schedule'] = $checkout_pane[0];
 }

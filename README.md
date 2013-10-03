@@ -1,4 +1,4 @@
-trail-commerce
+commerce-kindful
 ==============
 
-Trail payment gateway for Drupal Commerce
+Kindful payment gateway for Drupal Commerce
