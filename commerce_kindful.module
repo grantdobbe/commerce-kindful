@@ -38,14 +38,14 @@ function commerce_kindful_menu() {
 function commerce_kindful_commerce_payment_method_info() {
   $payment_methods = array();
 
-  $display_title = t('kindful');
+  $display_title = t('Kindful');
 
   $payment_methods['kindful'] = array(
     'base' => 'commerce_kindful',
-    'title' => t('kindful'),
-    'short_title' => t('kindful'),
+    'title' => t('Kindful'),
+    'short_title' => t('Kindful'),
     'display_title' => $display_title,
-    'description' => t('kindful '),
+    'description' => t('Kindful'),
     'terminal' => FALSE,
     'offsite' => TRUE,
     'offsite_autoredirect' => FALSE,
@@ -116,14 +116,52 @@ function commerce_kindful_redirect_form($form, &$form_state, $order, $payment_me
   
   // build the array for the query string and the form POST
   $data = array(
-    'organization_ID' => $settings['organization_ID'],
-    'source_ID' => t('Drupal Commerce'),
-    'fund_ID' => $settings['fund_ID'],
-    'item_ID' => $product->sku,
-    'item_title' => $product->title,
-    'price' => commerce_currency_amount_to_decimal($wrapper->commerce_order_total->amount->value(), 'USD'),
-    'success_URL' => $settings['return'],
-    'schedule' => $order->data['schedule'],
+    //'organization_ID' => $settings['organization_ID'],
+    //'source_ID' => t('Drupal Commerce'),
+    //'fund_ID' => $settings['fund_ID'],
+    //'item_ID' => $product->sku,
+    //'item_title' => $product->title,
+    //'price' => commerce_currency_amount_to_decimal($wrapper->commerce_order_total->amount->value(), 'USD'),
+    //'success_URL' => $settings['return'],
+    //'schedule' => $order->data['schedule'],
+    'type' => '',
+    'id' => '',
+    'created_at' => '',
+    'data' => array(
+      'object' => array(
+        'id' => '',
+        'fund' => array(
+          'id' => '',
+          'name' => '',
+          'short_name' => '',
+          'ancestors' => array(
+            'id' => '',
+            'name' => '',
+            'short_name' => '',
+          ),
+        ),
+      ),
+      'person' => array(
+        'email' => '',
+        'first_name' => '',
+        'guid' => '',
+        'last_name' => '',
+        'organization_name' => '',
+        'phone' => '',
+        'donor_type' => '',
+      ),
+      'amount_in_cents' => '',
+      'recurrence_period' => array(
+        'frequency' => '',
+      ),
+      'recurrence_period_option' => array(
+        'occurs_on' => '',
+      ),
+      'next_recurrence' => '',
+      'product' => array(),
+      'pledge' => array(),
+      'transaction_id' => '',
+    ),
   );
   
   // set up the redirection URL
@@ -139,7 +177,7 @@ function commerce_kindful_redirect_form($form, &$form_state, $order, $payment_me
   // submit to kindful
   $form['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Use kindful'),
+    '#value' => t('Use Kindful'),
   );
 
   return $form;
