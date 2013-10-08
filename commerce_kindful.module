@@ -20,7 +20,6 @@ function commerce_kindful_menu() {
     'access callback' => TRUE,
     'type' => MENU_CALLBACK,
   );
-
   // Define an additional transaction path that is payment method / instance specific.
   $items['commerce_kindful/transaction/%commerce_payment_method_instance'] = array(
     'page callback' => 'commerce_kindful_process_transaction',
@@ -28,7 +27,13 @@ function commerce_kindful_menu() {
     'access callback' => TRUE,
     'type' => MENU_CALLBACK,
   );
-
+  // update transaction
+  $items['commerce_kindful/webhook/update'] = array(
+    'page callback' => 'commerce_kindful_update_transaction',
+    'page arguments' => array(),
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
   return $items;
 }
 
@@ -67,7 +72,7 @@ function commerce_kindful_settings_form($settings = array()) {
   $form['organization_ID'] = array(
     '#type' => 'textfield',
     '#title' => t('Organization ID'),
-    '#description' => t('The Organization ID for your kindful account.'),
+    '#description' => t('The Organization ID for your Kindful account.'),
     '#default_value' => $settings['organization_ID'],
     '#required' => TRUE,
   );
@@ -76,7 +81,7 @@ function commerce_kindful_settings_form($settings = array()) {
   $form['fund_ID'] = array(
     '#type' => 'textfield',
     '#title' => t('Fund ID'),
-    '#description' => t('The Fund ID you want to use at kindful.'),
+    '#description' => t('The Fund ID you want to use at Kindful.'),
     '#default_value' => $settings['fund_ID'],
     '#required' => TRUE,
   );
@@ -116,52 +121,15 @@ function commerce_kindful_redirect_form($form, &$form_state, $order, $payment_me
   
   // build the array for the query string and the form POST
   $data = array(
-    //'organization_ID' => $settings['organization_ID'],
-    //'source_ID' => t('Drupal Commerce'),
-    //'fund_ID' => $settings['fund_ID'],
-    //'item_ID' => $product->sku,
-    //'item_title' => $product->title,
-    //'price' => commerce_currency_amount_to_decimal($wrapper->commerce_order_total->amount->value(), 'USD'),
-    //'success_URL' => $settings['return'],
-    //'schedule' => $order->data['schedule'],
-    'type' => '',
-    'id' => '',
-    'created_at' => '',
-    'data' => array(
-      'object' => array(
-        'id' => '',
-        'fund' => array(
-          'id' => '',
-          'name' => '',
-          'short_name' => '',
-          'ancestors' => array(
-            'id' => '',
-            'name' => '',
-            'short_name' => '',
-          ),
-        ),
-      ),
-      'person' => array(
-        'email' => '',
-        'first_name' => '',
-        'guid' => '',
-        'last_name' => '',
-        'organization_name' => '',
-        'phone' => '',
-        'donor_type' => '',
-      ),
-      'amount_in_cents' => '',
-      'recurrence_period' => array(
-        'frequency' => '',
-      ),
-      'recurrence_period_option' => array(
-        'occurs_on' => '',
-      ),
-      'next_recurrence' => '',
-      'product' => array(),
-      'pledge' => array(),
-      'transaction_id' => '',
-    ),
+    'organization_ID' => $settings['organization_ID'],
+    'source_ID' => t('Drupal Commerce'),
+    'fund_ID' => $settings['fund_ID'],
+    'item_ID' => $product->sku,
+    'item_title' => $product->title,
+    'price' => commerce_currency_amount_to_decimal($wrapper->commerce_order_total->amount->value(), 'USD'),
+    'success_URL' => $settings['return'],
+    'schedule' => $order->data['schedule'],
+   
   );
   
   // set up the redirection URL
@@ -233,4 +201,8 @@ function commerce_kindful_submit_form($payment_method, $pane_values, $checkout_p
 function commerce_kindful_submit_form_submit($payment_method, $pane_values, $checkout_pane, $order) {
   // grab the onetime/recurring option data and tack it onto  $order
   $order->data['schedule'] = $checkout_pane[0];
+}
+
+function commerce_kindful_update_transaction() {
+  
 }
